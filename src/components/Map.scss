@@ -1,0 +1,17 @@
+.countryName {
+  border: none;
+  background-color: inherit;
+  box-shadow: none;
+  font-size: 16px;
+  font-family: "EB Garamond", serif;
+}
+.zoomedCountryName {
+  font-size: 10px;
+  font-family: "EB Garamond", serif;
+  border: none;
+  background-color: inherit;
+  box-shadow: none;
+}
+path:focus {
+  outline: none;
+}

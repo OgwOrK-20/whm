@@ -1,25 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { useState } from "react";
+import "./App.css";
+import Map from "./components/Map";
+import TimeLine from "./components/TimeLine";
+import { BrowserRouter } from "react-router-dom";
+import { GeoJsonObject } from "geojson";
+import Carousel from "./components/Carousel";
 
+interface TimeLineData {
+  year: string;
+  data: string;
+}
 function App() {
+  const [selectedYear, setSelectedYear] = useState<TimeLineData | null>(null);
+  const [geoData, setGeoData] = useState<GeoJsonObject>({
+    type: "Feature",
+  });
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <BrowserRouter>
+        <Map
+          selectedYear={selectedYear}
+          setSelectedYear={setSelectedYear}
+          geoJsonData={geoData}
+          setGeoData={setGeoData}
+        ></Map>
+        <TimeLine
+          selectedYear={selectedYear}
+          setSelectedYear={setSelectedYear}
+          setGeoData={setGeoData}
+        ></TimeLine>
+      </BrowserRouter>
+    </React.Fragment>
   );
 }
 
