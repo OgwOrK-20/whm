@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useEffect } from "react";
+import React, { useLayoutEffect, useRef, useEffect, Dispatch } from "react";
 import "./TimeLine.scss";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -7,30 +7,24 @@ import { GeoJsonObject } from "geojson";
 
 import tlData from "../data/TimeLineData.json";
 import YearList from "./YearList";
+import { MapAction, MapActionType, MapState } from "../App";
 
 interface TimeLineData {
   year: string;
   data: string;
 }
 interface Props {
-  selectedYear: TimeLineData | null;
-  setSelectedYear: React.Dispatch<React.SetStateAction<TimeLineData | null>>;
-  setGeoData: React.Dispatch<React.SetStateAction<GeoJsonObject>>;
+  mapData: MapState;
+  dispatch: Dispatch<MapAction>;
 }
 
 const timeLineData: Array<TimeLineData> = tlData.timelineData;
 gsap.registerPlugin(ScrollTrigger, Draggable);
 
-export default function TimeLine({
-  selectedYear,
-  setSelectedYear,
-  setGeoData,
-}: Props) {
+export default function TimeLine({ mapData, dispatch }: Props) {
+  const { selectedYear } = mapData;
   const main = useRef(null);
   const track = useRef<HTMLDivElement>(null);
-  const getPosition = (ref: Element) => {
-    console.log(ref.getBoundingClientRect());
-  };
   const move = (left: number) => {
     gsap.to(track.current, {
       x: () => {
@@ -57,13 +51,19 @@ export default function TimeLine({
     }, main);
     return () => ctx.revert();
   }, []);
+
+  const setGeoJsonData = (geoJsonData: GeoJsonObject) => {
+    dispatch({
+      type: MapActionType.SETGEODATA,
+      selectedYear: null,
+      geoJsonData: geoJsonData,
+    });
+  };
   const getGeoJsonData = async (url: string | undefined) => {
-    console.log(url);
     if (!url) return;
     const res = await fetch(url);
     const geoJSONData: GeoJsonObject = await res.json();
-    console.log(geoJSONData);
-    setGeoData(geoJSONData);
+    setGeoJsonData(geoJSONData);
   };
   useEffect(() => {
     getGeoJsonData(selectedYear?.data);
@@ -76,11 +76,11 @@ export default function TimeLine({
           {timeLineData.map((data, index) => (
             <YearList
               year={data.year}
+              dispatch={dispatch}
               move={move}
               offwidth={-(17 + index * 160)}
               selectedYear={selectedYear}
-              setSelectedYear={setSelectedYear}
-              setGeoData={setGeoData}
+              // setSelectedYear={setSelectedYear}
               key={data.year}
             ></YearList>
           ))}

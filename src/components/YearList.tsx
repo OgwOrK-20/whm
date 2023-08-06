@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { gsap } from "gsap";
+import React, { Dispatch } from "react";
 import { GeoJsonObject } from "geojson";
 
 import tlData from "../data/TimeLineData.json";
+import { MapAction, MapActionType } from "../App";
 
 interface TimeLineData {
   year: string;
@@ -10,17 +10,23 @@ interface TimeLineData {
 }
 
 interface Props {
+  dispatch: Dispatch<MapAction>;
   year: string;
   offwidth: number;
   move: (offwidth: number) => void;
   selectedYear: TimeLineData | null;
-  setSelectedYear: React.Dispatch<React.SetStateAction<TimeLineData | null>>;
-  setGeoData: React.Dispatch<React.SetStateAction<GeoJsonObject>>;
+  // setSelectedYear: React.Dispatch<React.SetStateAction<TimeLineData | null>>;
 }
 
 export default function YearList(props: Props) {
-  const { year, offwidth, move, selectedYear, setSelectedYear, setGeoData } =
-    props;
+  const { year, offwidth, move, selectedYear, dispatch } = props;
+  const setSelectedYear = (year: TimeLineData) => {
+    dispatch({
+      type: MapActionType.SETYEAR,
+      selectedYear: year,
+      geoJsonData: null,
+    });
+  };
   const getDataByYear = (year: string): string => {
     return tlData.timelineData.find((obj) => obj.year === year)?.data || "123";
   };

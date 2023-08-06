@@ -1,26 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Dispatch, useEffect, useRef, useState } from "react";
 import colorPalette from "../data/ColorPalette.json";
 import { MapContainer, TileLayer, GeoJSON, useMapEvents } from "react-leaflet";
 import { GeoJsonObject } from "geojson";
 import "./Map.scss";
-
-interface TimeLineData {
-  year: string;
-  data: string;
-}
+import { MapAction, MapState, TimeLineData, MapActionType } from "../App";
 
 interface Props {
-  selectedYear: TimeLineData | null;
-  setSelectedYear: React.Dispatch<React.SetStateAction<TimeLineData | null>>;
-  geoJsonData: GeoJsonObject;
-  setGeoData: React.Dispatch<React.SetStateAction<GeoJsonObject>>;
+  mapData: MapState;
+  dispatch: Dispatch<MapAction>;
 }
 
 interface GeoJsonLayerProps {
-  geoJsonData: GeoJsonObject;
+  geoJsonData: GeoJsonObject | null;
   geoJsonLayer: any;
 }
 
+// write two components separately because useMapEffect (provided by react-leaflet) can only be used inside <MapContainer>
 function GeoJsonLayer({ geoJsonData, geoJsonLayer }: GeoJsonLayerProps) {
   const generateColor = (name: string) => {
     let index: number = 0,
@@ -42,7 +37,8 @@ function GeoJsonLayer({ geoJsonData, geoJsonLayer }: GeoJsonLayerProps) {
       geoJsonLayer.current.clearLayers().addData(geoJsonData);
     }
   }, [zoomLevel]);
-  return (
+
+  return geoJsonData ? (
     <GeoJSON
       ref={geoJsonLayer}
       data={geoJsonData}
@@ -65,15 +61,15 @@ function GeoJsonLayer({ geoJsonData, geoJsonLayer }: GeoJsonLayerProps) {
         layer.on({ click: () => console.log(feature.properties.NAME) });
       }}
     ></GeoJSON>
-  );
+  ) : null;
 }
 
-export default function Map({ geoJsonData }: Props) {
+export default function Map({ mapData, dispatch }: Props) {
+  const { geoJsonData } = mapData;
+
   const geoJsonLayer = useRef<any>(null);
   useEffect(() => {
     if (geoJsonLayer.current) {
-      console.log("refreshing");
-
       geoJsonLayer.current.clearLayers().addData(geoJsonData);
     }
   }, [geoJsonData]);
