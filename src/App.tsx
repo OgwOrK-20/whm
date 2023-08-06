@@ -54,10 +54,7 @@ const initialMapData: MapState = {
 
 function App() {
   const [mapData, dispatch] = useReducer(mapReducer, initialMapData);
-  const [selectedYear, setSelectedYear] = useState<TimeLineData | null>(null);
-  const [geoData, setGeoData] = useState<GeoJsonObject>({
-    type: "Feature",
-  });
+
   return (
     <React.Fragment>
       <BrowserRouter>
