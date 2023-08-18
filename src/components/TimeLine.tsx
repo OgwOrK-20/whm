@@ -55,7 +55,6 @@ export default function TimeLine({ mapData, dispatch }: Props) {
   const setGeoJsonData = (geoJsonData: GeoJsonObject) => {
     dispatch({
       type: MapActionType.SETGEODATA,
-      selectedYear: null,
       geoJsonData: geoJsonData,
     });
   };
