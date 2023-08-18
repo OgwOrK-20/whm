@@ -1,5 +1,4 @@
-import React, { Dispatch } from "react";
-import { GeoJsonObject } from "geojson";
+import React, { Dispatch, useState } from "react";
 
 import tlData from "../data/TimeLineData.json";
 import { MapAction, MapActionType } from "../App";

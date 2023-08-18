@@ -1,4 +1,10 @@
-import React, { useLayoutEffect, useRef, useEffect, Dispatch } from "react";
+import React, {
+  useLayoutEffect,
+  useRef,
+  useEffect,
+  Dispatch,
+  useState,
+} from "react";
 import "./TimeLine.scss";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,6 +14,7 @@ import { GeoJsonObject } from "geojson";
 import tlData from "../data/TimeLineData.json";
 import YearList from "./YearList";
 import { MapAction, MapActionType, MapState } from "../App";
+import LoadingPage from "./LoadingPage";
 
 interface TimeLineData {
   year: string;
@@ -16,12 +23,13 @@ interface TimeLineData {
 interface Props {
   mapData: MapState;
   dispatch: Dispatch<MapAction>;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const timeLineData: Array<TimeLineData> = tlData.timelineData;
 gsap.registerPlugin(ScrollTrigger, Draggable);
 
-export default function TimeLine({ mapData, dispatch }: Props) {
+export default function TimeLine({ mapData, dispatch, setIsLoading }: Props) {
   const { selectedYear } = mapData;
   const main = useRef(null);
   const track = useRef<HTMLDivElement>(null);
@@ -60,14 +68,20 @@ export default function TimeLine({ mapData, dispatch }: Props) {
   };
   const getGeoJsonData = async (url: string | undefined) => {
     if (!url) return;
-    const res = await fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
-    const geoJSONData: GeoJsonObject = await res.json();
-    setGeoJsonData(geoJSONData);
+    setIsLoading(true);
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      const geoJSONData: GeoJsonObject = await res.json();
+      setGeoJsonData(geoJSONData);
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
   };
   useEffect(() => {
     getGeoJsonData(process.env.PUBLIC_URL + selectedYear?.data);

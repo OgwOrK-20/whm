@@ -44,7 +44,6 @@ export default function CountryTab(props: Props) {
       selectedArea: "Click a highlight area to select country",
     });
   }, [selectedYear?.year]);
-  console.log(selectedArea);
   return (
     <div
       ref={container}
