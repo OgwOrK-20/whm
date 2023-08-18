@@ -60,12 +60,17 @@ export default function TimeLine({ mapData, dispatch }: Props) {
   };
   const getGeoJsonData = async (url: string | undefined) => {
     if (!url) return;
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
     const geoJSONData: GeoJsonObject = await res.json();
     setGeoJsonData(geoJSONData);
   };
   useEffect(() => {
-    getGeoJsonData(process.env.PUBLIC_URL + "/" + selectedYear?.data);
+    getGeoJsonData(process.env.PUBLIC_URL + selectedYear?.data);
   }, [selectedYear]);
   return (
     <div className="timeline" ref={main}>
