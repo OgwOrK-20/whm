@@ -65,7 +65,7 @@ export default function TimeLine({ mapData, dispatch }: Props) {
     setGeoJsonData(geoJSONData);
   };
   useEffect(() => {
-    getGeoJsonData(process.env.PUBLIC_URL + selectedYear?.data);
+    getGeoJsonData(process.env.PUBLIC_URL + "/" + selectedYear?.data);
   }, [selectedYear]);
   return (
     <div className="timeline" ref={main}>
